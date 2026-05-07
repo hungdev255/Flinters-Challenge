@@ -2,6 +2,9 @@
 REM One-shot runner for Windows cmd.exe — does not depend on PowerShell
 REM execution policy. Sets JAVA_HOME, falls back through common JDK 21
 REM install paths, then runs the pre-built aggregator jar.
+REM
+REM Usage:  run.cmd           (double-click OK — window stays open at end)
+REM         run.cmd /nopause  (for scripts/CI — exit immediately)
 
 setlocal
 
@@ -45,3 +48,8 @@ if exist "target\aggregator.jar" (
 )
 
 java -XX:+UseG1GC -Xmx128m -jar "%JAR%" --input ad_data.csv --output results
+
+if /i not "%~1"=="/nopause" (
+    echo.
+    pause
+)

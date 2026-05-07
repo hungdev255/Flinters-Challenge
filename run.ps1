@@ -1,6 +1,14 @@
 # Convenience launcher: sets JAVA_HOME + PATH for this session, then runs the
 # pre-built aggregator jar against ad_data.csv. Reviewer-friendly — no global
 # install required if a JDK 21 already lives in one of the common locations.
+#
+# If you double-click from Explorer, the window waits for Enter before closing.
+# For scripts/CI: .\run.ps1 -NoPause
+
+[CmdletBinding()]
+param(
+    [switch] $NoPause
+)
 
 $ErrorActionPreference = 'Stop'
 
@@ -52,3 +60,8 @@ if (Test-Path .\target\aggregator.jar) {
 # 4. Run.
 Write-Host "Running aggregator ($jar) ..." -ForegroundColor Green
 java -XX:+UseG1GC -Xmx128m -jar $jar --input ad_data.csv --output results
+
+if (-not $NoPause) {
+    Write-Host ""
+    Read-Host "Press Enter to close"
+}

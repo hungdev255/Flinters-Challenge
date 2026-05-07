@@ -59,6 +59,12 @@ run.cmd
 Both scripts prefer `target\aggregator.jar` if a fresh build exists, and
 fall back to the committed `dist\aggregator.jar` automatically.
 
+If you **double-click** the script, Windows opens a console that would
+otherwise close immediately when the program finishes; both scripts **wait
+for a key** at the end (`pause` / `Read-Host`) so you can read the output.
+To skip that (e.g. in another script): `run.cmd /nopause` or
+`.\run.ps1 -NoPause`.
+
 ### Windows / macOS / Linux — manual (java on PATH)
 
 ```powershell
