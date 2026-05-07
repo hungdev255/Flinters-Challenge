@@ -1,0 +1,55 @@
+Ad Performance Aggregator — 1GB benchmark
+==========================================
+
+Date         : 2026-05-07
+Host         : Windows 11 Pro 10.0.26200, amd64
+JDK          : Amazon Corretto 21.0.10 (OpenJDK 21.0.10+7-LTS)
+Maven        : Apache Maven 3.9.11 (bundled with IntelliJ IDEA)
+Input file   : ad_data.csv
+Input size   : 1,043,304,870 bytes (~995 MB)
+Unique campaigns parsed: 50
+
+Build:
+    mvn -B -ntp clean package
+    -> 12/12 tests passed
+    -> target/aggregator.jar (460 KB shaded)
+
+----------------------------------------------------------------------
+Run 1: documented operating ceiling — -Xmx128m
+----------------------------------------------------------------------
+Command:
+    java -XX:+UseG1GC -Xmx128m -jar target/aggregator.jar \
+         --input ad_data.csv --output results
+
+Output (stdout):
+    Processing: ad_data.csv
+    Written:    results\top10_ctr.csv
+                results\top10_cpa.csv
+    Campaigns:  50
+    Time:       8.60s | Peak heap: 106.9 MB
+
+----------------------------------------------------------------------
+Run 2: stress demonstration — -Xmx64m
+----------------------------------------------------------------------
+Command:
+    java -XX:+UseG1GC -Xmx64m -jar target/aggregator.jar \
+         --input ad_data.csv --output results
+
+Output (stdout):
+    Processing: ad_data.csv
+    Written:    results\top10_ctr.csv
+                results\top10_cpa.csv
+    Campaigns:  50
+    Time:       9.23s | Peak heap: 60.9 MB
+
+----------------------------------------------------------------------
+Notes
+----------------------------------------------------------------------
+- Peak heap is reported by ManagementFactory.getMemoryPoolMXBeans()
+  summed across HEAP-type pools (their all-time peak usage).
+- The -Xmx64m run completed successfully, demonstrating that the
+  streaming + primitive-accumulator design keeps the working set well
+  under the documented 128MB ceiling. The ~7% wall-time penalty is the
+  cost of more frequent GC cycles when the heap is squeezed.
+- Time is the wall clock from start of CSV streaming through writing
+  both output CSVs (measured via System.nanoTime() in App.run).

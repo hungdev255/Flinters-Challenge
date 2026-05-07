@@ -1,0 +1,23 @@
+# One-shot Compose definition. Reviewer runs:
+#
+#   docker compose run --rm aggregator
+#
+# That builds the image (first run only), mounts the project root into
+# /data, and runs the aggregator against ad_data.csv. Output CSVs land
+# in ./results on the host.
+
+services:
+  aggregator:
+    build: .
+    image: ad-aggregator:latest
+    container_name: ad-aggregator
+    volumes:
+      - ./:/data
+    working_dir: /data
+    # Entrypoint already pins -XX:+UseG1GC -Xmx128m and the jar path.
+    # We only need to pass CLI args here.
+    command:
+      - --input
+      - /data/ad_data.csv
+      - --output
+      - /data/results

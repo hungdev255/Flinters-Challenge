@@ -1,0 +1,16 @@
+ad_data.csv
+
+# Java / Maven
+target/
+*.class
+*.jar
+!dist/aggregator.jar
+!aggregator.jar.keep
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
