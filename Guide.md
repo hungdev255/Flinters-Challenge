@@ -81,8 +81,11 @@ Processing: ad_data.csv
 Written:    results/top10_ctr.csv
             results/top10_cpa.csv
 Campaigns:  50
-Time:       ~8-10s | Peak heap: ~107 MB
+Time:       <wall clock — depends on CPU/SSD> | Peak heap: ~107 MB
 ```
+
+Peak heap stays in that ballpark under `-Xmx128m`; wall time differs by machine
+(Author's bench: Ryzen 7 9700X / 32 GB — see [README.md → Performance](README.md#performance).)
 
 The two output CSVs land in `results/`.
 
@@ -106,16 +109,18 @@ docker run --rm -v "$PWD:/data" ad-aggregator \
 The image's entrypoint pins `-XX:+UseG1GC -Xmx128m`.
 
 > **Note:** On Docker Desktop for Windows, volume I/O between the Windows
-> host and the Linux container adds overhead. Expect ~50 s wall time vs ~3 s
-> natively — peak heap stays identical (~107 MB), proving the logic is the same.
+> host and the Linux container adds overhead. Expect on the order of ~50 s
+> wall time in Docker vs a few seconds natively — peak heap stays the same
+> (~107 MB), proving the logic is the same.
 
 ### I just want to see the results
 
 `results/top10_ctr.csv` and `results/top10_cpa.csv` are already committed
 from the benchmark run. Open them directly to see the expected output shape.
 
-`benchmarks/run-1gb.log` has the timed run output (8.60 s @ 106.9 MB peak
-heap on `-Xmx128m`; 9.23 s @ 60.9 MB on `-Xmx64m`).
+`benchmarks/run-1gb.log` mirrors the latest measured run (3.15 s @ 106.8 MB
+peak heap on `-Xmx128m`; 3.42 s @ 60.8 MB on `-Xmx64m` — same host as README
+Performance).
 
 ---
 
@@ -158,8 +163,8 @@ java -XX:+UseG1GC -Xmx64m -jar dist/aggregator.jar \
     --output results/
 ```
 
-Runs to completion. ~7% slower than the 128 MB run due to more frequent GC
-cycles, but the working set fits comfortably.
+Runs to completion. ~8% slower than the 128 MB run on the author's machine
+due to more frequent GC cycles, but the working set fits comfortably.
 
 ---
 
