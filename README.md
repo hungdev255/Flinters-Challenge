@@ -99,18 +99,17 @@ No other runtime dependencies.
 ## Performance
 
 Measured on the provided `ad_data.csv` (1,043,304,870 bytes / ~995 MB) on
-Windows 11, JDK 21 Corretto. Raw output is in
-[`benchmarks/run-1gb.log`](benchmarks/run-1gb.log).
+Windows 11, AMD Ryzen 7 9700X, 32 GB RAM, JDK 21 Temurin.
 
 | JVM flags                    | Wall time | Peak heap |
 |------------------------------|-----------|-----------|
-| `-XX:+UseG1GC -Xmx128m`      | **8.60 s** | **106.9 MB** |
-| `-XX:+UseG1GC -Xmx64m`       | **9.23 s** | **60.9 MB**  |
+| `-XX:+UseG1GC -Xmx128m`      | **3.15 s** | **106.8 MB** |
+| `-XX:+UseG1GC -Xmx64m`       | **3.42 s** | **60.8 MB**  |
 
 50 unique campaigns aggregated from ~50M+ rows. The `-Xmx64m` run
 completed successfully — proof that the streaming + primitive-accumulator
 design keeps the working set well under the documented 128MB operating
-ceiling. The ~7% wall-time penalty at `-Xmx64m` is just more frequent GC
+ceiling. The ~8% wall-time penalty at `-Xmx64m` is just more frequent GC
 cycles under a tighter heap.
 
 ## Design decisions
